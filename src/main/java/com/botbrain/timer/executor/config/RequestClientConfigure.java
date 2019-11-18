@@ -18,9 +18,9 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class RequestClientConfigure {
 
-    @Bean
+
     @LoadBalanced
-    @Primary
+    @Bean("innerRestTemplate")
     public RestTemplate innerRestTemplate() {
         SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
         simpleClientHttpRequestFactory.setConnectTimeout(5000);
@@ -28,12 +28,12 @@ public class RequestClientConfigure {
         return new RestTemplate(simpleClientHttpRequestFactory);
     }
 
-//    @Bean
-//    public RestTemplate outerRestTemplate() {
-//        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
-//        simpleClientHttpRequestFactory.setConnectTimeout(5000);
-//        simpleClientHttpRequestFactory.setReadTimeout(10000);
-//        return new RestTemplate(simpleClientHttpRequestFactory);
-//    }
+    @Bean("outerRestTemplate")
+    public RestTemplate outerRestTemplate() {
+        SimpleClientHttpRequestFactory simpleClientHttpRequestFactory = new SimpleClientHttpRequestFactory();
+        simpleClientHttpRequestFactory.setConnectTimeout(5000);
+        simpleClientHttpRequestFactory.setReadTimeout(10000);
+        return new RestTemplate(simpleClientHttpRequestFactory);
+    }
 
 }

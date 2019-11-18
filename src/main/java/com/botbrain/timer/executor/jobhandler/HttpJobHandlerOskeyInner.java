@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Future;
@@ -39,6 +40,10 @@ public class HttpJobHandlerOskeyInner extends IJobHandler {
         //http://attention/v1/inner/ECEBULUGIG/update/topic/content
         try {
             List<Map<String, Object>> osList = configFeignClient.findAll(3, "").getData();
+            osList.clear();
+            Map map=new HashMap();
+            map.put("os_key","2WIQRCZAPA");
+            osList.add(map);
             List<Future<Response>> resultList = new ArrayList<>();
             for (Map<String, Object> dataOsInfo : osList) {
                 resultList.add(jobExecutor.submit(() -> {
