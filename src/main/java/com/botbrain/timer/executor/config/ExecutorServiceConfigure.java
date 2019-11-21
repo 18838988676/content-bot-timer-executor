@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Configuration
 public class ExecutorServiceConfigure {
 
-    @Bean
+    @Bean("jobExecutor")
     public ThreadPoolTaskExecutor jobExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(200);
