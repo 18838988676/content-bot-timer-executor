@@ -12,6 +12,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.BufferedReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,25 +37,27 @@ public class HttpJobHandlerOskeyOuter extends IJobHandler {
     @Autowired
     private ThreadPoolTaskExecutor jobExecutor;
 
-    private ReturnT res=ReturnT.SUCCESS;
+    private ReturnT res = ReturnT.SUCCESS;
+
     @Override
     public ReturnT<String> execute(String param) throws Exception {
+        // request
         try {
             List<Future<Response>> resultList = new ArrayList<>();
                 resultList.add(jobExecutor.submit(() -> {
-                    ResponseEntity<Response> responseEntity = outerRestTemplate.getForEntity(param, Response.class);
+            ResponseEntity<Response> responseEntity = outerRestTemplate.getForEntity(param, Response.class);
                     return responseEntity.getBody();
                 }));
             StringBuilder msg = new StringBuilder();
             for (Future<Response> responseFuture : resultList) {
                 Response result = responseFuture.get();
-                System.out.println("result:"+result);
-                if(!result.succeeded())
-                    res=ReturnT.FAIL;
-                msg.append("msg:"+result.getMsg());
-                msg.append("code:"+result.getCode());
-                msg.append("cost:"+result.getCost());
-                msg.append("data:"+result.getData());
+                System.out.println("result:" + result);
+                if (!result.succeeded())
+                    res = ReturnT.FAIL;
+                msg.append("msg:" + result.getMsg());
+                msg.append("code:" + result.getCode());
+                msg.append("cost:" + result.getCost());
+                msg.append("data:" + result.getData());
                 msg.append("\r\n");
             }
             XxlJobLogger.log(msg.toString());
