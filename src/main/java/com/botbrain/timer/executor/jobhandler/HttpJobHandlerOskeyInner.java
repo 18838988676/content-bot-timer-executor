@@ -30,27 +30,16 @@ public class HttpJobHandlerOskeyInner extends IJobHandler {
     @Autowired
     private RestTemplate innerRestTemplate;
     @Autowired
-    private ConfigFeignClient configFeignClient;
-    @Autowired
     private ThreadPoolTaskExecutor jobExecutor;
-
     private ReturnT res=ReturnT.SUCCESS;
     @Override
     public ReturnT<String> execute(String param) throws Exception {
-        //http://attention/v1/inner/ECEBULUGIG/update/topic/content
         try {
-            List<Map<String, Object>> osList = configFeignClient.findAll(3, "").getData();
-            osList.clear();
-            Map map=new HashMap();
-            map.put("os_key","2WIQRCZAPA");
-            osList.add(map);
             List<Future<Response>> resultList = new ArrayList<>();
-            for (Map<String, Object> dataOsInfo : osList) {
                 resultList.add(jobExecutor.submit(() -> {
-                    ResponseEntity<Response> responseEntity = innerRestTemplate.getForEntity(param.replace("{os_key}",(String)dataOsInfo.get("os_key")), Response.class);
+                    ResponseEntity<Response> responseEntity = innerRestTemplate.getForEntity(param, Response.class);
                     return responseEntity.getBody();
                 }));
-            }
             StringBuilder msg = new StringBuilder();
             for (Future<Response> responseFuture : resultList) {
                 Response result = responseFuture.get();
